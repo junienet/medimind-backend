@@ -23,18 +23,6 @@ app.use('/api/medications', require('./routes/medications'));
 app.use('/api/patients', require('./routes/patients'));
 app.use('/api/telegram', require('./routes/telegram'));
 
-// Telegram webhook endpoint
-app.post('/api/telegram/webhook', (req, res) => {
-  const bot = require('./services/telegramBot').getBot();
-  if (bot) {
-    bot.processUpdate(req.body);
-  }
-  else {
-    console.error('⚠ Bot instance not initialized');
-
-  }
-  res.sendStatus(200);
-});
 app.get('/api/health', (req, res) => res.json({ status: 'MediMind API is running' }));
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/medimind';
