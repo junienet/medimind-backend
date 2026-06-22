@@ -24,7 +24,8 @@ function initBot() {
     return null;
   }
 
-  bot = new TelegramBot(token, { polling: true });
+  bot = new TelegramBot(token);
+  bot.setWebHook(`${process.env.FRONTEND_URL}/api/telegram/webhook`);
 
   // ── /start command (with or without a linking code) ──
   bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
