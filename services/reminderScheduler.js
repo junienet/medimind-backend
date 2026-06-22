@@ -7,17 +7,18 @@
  */
 
 const cron = require('node-cron');
-const Reminder        = require('../models/Reminder');
-const MedicationLog   = require('../models/MedicationLog');
+const Reminder = require('../models/Reminder');
+const MedicationLog = require('../models/MedicationLog');
 const { sendReminder } = require('./telegramBot');
 
 function startScheduler() {
   // Runs at the top of every minute: "* * * * *"
   cron.schedule('* * * * *', async () => {
     try {
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, '0');
-      const mm = String(now.getMinutes()).padStart(2, '0');
+      const nowUTC = new Date();
+      const nowMYT = new Date(nowUTC.getTime() + (8 * 60 * 60 * 1000));
+      const hh = String(nowMYT.getHours()).padStart(2, '0');
+      const mm = String(nowMYT.getMinutes()).padStart(2, '0');
       const currentTime = `${hh}:${mm}`;
 
       const dueReminders = await Reminder.find({
@@ -52,10 +53,10 @@ function startScheduler() {
 
         await sendReminder(patientUser.telegram_chat_id, {
           medicationName: prescription.medicationId?.medication_name || 'Medication',
-          dosage:         prescription.medicationId?.dosage || '',
-          instructions:   prescription.medicationId?.instructions || '',
+          dosage: prescription.medicationId?.dosage || '',
+          instructions: prescription.medicationId?.instructions || '',
           prescriptionId: prescription._id,
-          reminderTime:   currentTime
+          reminderTime: currentTime
         });
 
         console.log(`📩 Sent Telegram reminder to ${patientUser.name} — ${prescription.medicationId?.medication_name} (${currentTime})`);
