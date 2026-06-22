@@ -29,6 +29,10 @@ app.post('/api/telegram/webhook', (req, res) => {
   if (bot) {
     bot.processUpdate(req.body);
   }
+  else {
+    console.error('⚠ Bot instance not initialized');
+
+  }
   res.sendStatus(200);
 });
 app.get('/api/health', (req, res) => res.json({ status: 'MediMind API is running' }));
